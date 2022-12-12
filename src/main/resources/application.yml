@@ -8,7 +8,7 @@ spring:
     name: minio_test
 
 minio:
-  server: http://47.92.216.0
+  server: http://127.0.0.1
   port: 19000
   accessKey: minio
   secretKey: 12345678
