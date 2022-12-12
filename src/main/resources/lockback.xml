@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+
+    <!-- 定义日志存放目录 -->
+    <springProperty scope="context" name="app_log" source="spring.application.name" />
+    <property name="logPath" value="/project_java_logs/${app_log}}-log" />
+
+    <!-- 日志级别从低到高分为TRACE < DEBUG < INFO < WARN < ERROR < FATAL，如果设置为WARN，则低于WARN的信息都不会输出 -->
+
+    <!-- 1,consolo控制台日志 -->
+    <appender name="consoleLog" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{20} - [%method,%line] - %msg%n</pattern>
+        </layout>
+    </appender>
+    <!-- 2,debug日志，记录查询语句 -->
+    <appender name="fileDebugLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <!-- 设置日志输出格式 -->
+        <encoder>
+            <pattern>%date %-5level %logger{5} - %msg%n</pattern>
+            <!-- 设置编码格式，以防中文乱码 -->
+            <charset class="java.nio.charset.Charset">UTF-8</charset>
+        </encoder>
+        <!-- 当前日这个类型的所有日志。当日志超出下面设置的大小会分割压缩放到debug文件夹下，但debug.log不改变，直到第二天才会重置 -->
+        <File>${logPath}/debug.log</File>
+        <!--滚动策略，靠这个来生成不同文件。  TimeBasedRollingPolicy 不能设置文件大小，所以用SizeAndTimeBasedRollingPolicy-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!--日志存放路径-->
+            <fileNamePattern>>${logPath}/%d{yyyy-MM-dd}/debug/debug-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <!-- 日志文件保留天数，超过这个则删除旧的日志 -->
+            <MaxHistory>15</MaxHistory>
+            <!-- 日志文件最大值，超过则进行分割 -->
+            <maxFileSize>5MB</maxFileSize>
+            <!-- 日志保留最大的值，超过这个则删除旧的日志 -->
+            <totalSizeCap>2GB</totalSizeCap>
+            <!-- 设置这个启动时MaxHistory才生效，才会删日志 -->
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+    </appender>
+    <!-- 3,info普通日志 -->
+    <appender name="fileInfoLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <!-- 设置日志输出格式 -->
+        <encoder>
+            <pattern>%date %-5level %logger{5} - %msg%n</pattern>
+            <!-- 设置编码格式，以防中文乱码 -->
+            <charset class="java.nio.charset.Charset">UTF-8</charset>
+        </encoder>
+        <!-- 当前日这个类型的所有日志。当日志超出下面设置的大小会分割压缩放到info文件夹下，但info.log不改变，直到第二天才会重置 -->
+        <File>${logPath}/info.log</File>
+        <!--滚动策略，靠这个来生成不同文件。  TimeBasedRollingPolicy 不能设置文件大小，所以用SizeAndTimeBasedRollingPolicy-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!--日志存放路径-->
+            <fileNamePattern>${logPath}/%d{yyyy-MM-dd}/info/info-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <!-- 日志文件保留天数，超过这个则删除旧的日志 -->
+            <MaxHistory>15</MaxHistory>
+            <!-- 日志文件最大值，超过则进行分割 -->
+            <maxFileSize>5MB</maxFileSize>
+            <!-- 日志保留最大的值，超过这个则删除旧的日志 -->
+            <totalSizeCap>1GB</totalSizeCap>
+            <!-- 设置这个启动时MaxHistory才生效，才会删日志 -->
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+    </appender>
+    <!-- 4,警告日志 -->
+    <appender name="fileWarnLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>WARN</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <!-- 设置日志输出格式 -->
+        <encoder>
+            <pattern>%date %-5level %logger{5} - %msg%n</pattern>
+            <!-- 设置编码格式，以防中文乱码 -->
+            <charset class="java.nio.charset.Charset">UTF-8</charset>
+        </encoder>
+        <!-- 当前日这个类型的所有日志。当日志超出下面设置的大小会分割压缩放到info文件夹下，但warn.log不改变，直到第二天才会重置 -->
+        <File>${logPath}/warn.log</File>
+        <!--滚动策略，靠这个来生成不同文件。  TimeBasedRollingPolicy 不能设置文件大小，所以用SizeAndTimeBasedRollingPolicy-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!--日志存放路径。注意路径后面如果加.zip等压缩文件类型结尾的，超过单个文件最大值进行分割时会自动对文件进行压缩-->
+            <fileNamePattern>${logPath}/%d{yyyy-MM-dd}/warn/warn-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <!-- 日志文件保留天数，超过这个则删除旧的日志 -->
+            <MaxHistory>15</MaxHistory>
+            <!-- 日志文件最大值，超过则进行分割 -->
+            <maxFileSize>5MB</maxFileSize>
+            <!-- 日志保留最大的值，超过这个则删除旧的日志 -->
+            <totalSizeCap>1GB</totalSizeCap>
+            <!-- 设置这个启动时MaxHistory才生效，才会删日志 -->
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+    </appender>
+    <!-- 5,错误日志 -->
+    <appender name="fileErrorLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 拦截处理ERROR级别的日志 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <!-- 设置日志输出格式 -->
+        <encoder>
+            <pattern>%date %-5level %logger{5} - %msg%n</pattern>
+            <!-- 设置编码格式，以防中文乱码 -->
+            <charset class="java.nio.charset.Charset">UTF-8</charset>
+        </encoder>
+        <!-- 当前日这个类型的所有日志。当日志超出下面设置的大小会分割压缩放到info文件夹下，但error.log不改变，直到第二天才会重置 -->
+        <File>${logPath}/error.log</File>
+        <!--滚动策略，靠这个来生成不同文件。  TimeBasedRollingPolicy 不能设置文件大小，所以用SizeAndTimeBasedRollingPolicy-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!--日志存放路径。注意路径后面如果加.zip等压缩文件类型结尾的，超过单个文件最大值进行分割时会自动对文件进行压缩-->
+            <fileNamePattern>${logPath}/%d{yyyy-MM-dd}/error/error-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <!-- 日志文件保留天数，超过这个则删除旧的日志 -->
+            <MaxHistory>15</MaxHistory>
+            <!-- 日志文件最大值，超过则进行分割 -->
+            <maxFileSize>5MB</maxFileSize>
+            <!-- 日志保留最大的值，超过这个则删除旧的日志 -->
+            <totalSizeCap>1GB</totalSizeCap>
+            <!-- 设置这个启动时MaxHistory才生效，才会删日志 -->
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="consoleLog" />
+        <appender-ref ref="fileInfoLog" />
+        <appender-ref ref="fileErrorLog" />
+        <appender-ref ref="fileWarnLog" />
+    </root>
+
+    <!-- 系统模块级别全局日志控制 -->
+    <logger name="com.xzq" level="info"/>
+    <!-- Spring日志级别控制  -->
+    <logger name="org.springframework" level="warn" />
+    <!-- 记录sql语句 -->
+    <logger name="com.xzq.mapper" level="debug" >
+        <appender-ref ref="fileDebugLog" />
+    </logger>
+
+</configuration>
+
